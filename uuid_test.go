@@ -4,11 +4,12 @@ import (
 	"context"
 	"testing"
 
-	"github.com/gofrs/uuid/v5"
-	pgxuuid "github.com/jackc/pgx-gofrs-uuid"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxtest"
 	"github.com/stretchr/testify/require"
+
+	pgxuuid "github.com/Timosha/pgx-google-uuid"
 )
 
 var defaultConnTestRunner pgxtest.ConnTestRunner
@@ -22,7 +23,7 @@ func init() {
 
 func TestCodecDecodeValue(t *testing.T) {
 	defaultConnTestRunner.RunTest(context.Background(), t, func(ctx context.Context, t testing.TB, conn *pgx.Conn) {
-		original, err := uuid.NewV4()
+		original, err := uuid.NewRandom()
 		require.NoError(t, err)
 
 		rows, err := conn.Query(ctx, `select $1::uuid`, original)
@@ -60,7 +61,7 @@ func TestArray(t *testing.T) {
 		inputSlice := []uuid.UUID{}
 
 		for i := 0; i < 10; i++ {
-			u, err := uuid.NewV4()
+			u, err := uuid.NewRandom()
 			require.NoError(t, err)
 			inputSlice = append(inputSlice, u)
 		}

@@ -3,7 +3,7 @@ package uuid
 import (
 	"fmt"
 
-	"github.com/gofrs/uuid/v5"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -118,7 +118,7 @@ func (UUIDCodec) DecodeValue(tm *pgtype.Map, oid uint32, format int16, src []byt
 	return target, nil
 }
 
-// Register registers the github.com/gofrs/uuid integration with a pgtype.Map.
+// Register registers the github.com/google/uuid integration with a pgtype.Map.
 func Register(tm *pgtype.Map) {
 	tm.TryWrapEncodePlanFuncs = append([]pgtype.TryWrapEncodePlanFunc{TryWrapUUIDEncodePlan}, tm.TryWrapEncodePlanFuncs...)
 	tm.TryWrapScanPlanFuncs = append([]pgtype.TryWrapScanPlanFunc{TryWrapUUIDScanPlan}, tm.TryWrapScanPlanFuncs...)

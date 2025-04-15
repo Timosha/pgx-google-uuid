@@ -9,7 +9,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype/testutil"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5"
-	"github.com/gofrs/uuid/v5"
+	"github.com/google/uuid"
 	pgxuuid "github.com/jackc/pgx-gofrs-uuid"
 )
 
@@ -25,13 +25,14 @@ func BenchmarkQueryDecode_PG_UUID_to_Go_<%= go_type.gsub(/\W/, "_") %>_<%= rows 
     b.ResetTimer()
     var v [<%= columns %>]<%= go_type %>
     for i := 0; i < b.N; i++ {
-      _, err := conn.QueryFunc(
+      rows, err := conn.Query(
         ctx,
         `select <% columns.times do |col_idx| %><% if col_idx != 0 %>, <% end %>gen_random_uuid()<% end %> from generate_series(1, <%= rows %>) n`,
-        nil,
-        []interface{}{<% columns.times do |col_idx| %><% if col_idx != 0 %>, <% end %>&v[<%= col_idx%>]<% end %>},
-        func(pgx.QueryFuncRow) error { return nil },
       )
+      if err != nil {
+        b.Fatal(err)
+      }
+      _, err = pgx.ForEachRow(rows, []interface{}{<% columns.times do |col_idx| %><% if col_idx != 0 %>, <% end %>&v[<%= col_idx%>]<% end %>}, func() error { return nil })
       if err != nil {
         b.Fatal(err)
       }
