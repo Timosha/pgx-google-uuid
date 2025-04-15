@@ -1,4 +1,4 @@
-module github.com/Timosha/pgx-google-uuid
+module github.com/timosha/pgx-google-uuid
 
 go 1.23.0
 

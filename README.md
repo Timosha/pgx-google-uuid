@@ -6,7 +6,7 @@ use `uuid.UUID` and `[]uuid.UUID` with `QueryExecModeExec` and `QueryExecModeSim
 ## Usage
 
 ```go
-    import pgxuuid "github.com/Timosha/pgx-google-uuid"
+    import pgxuuid "github.com/timosha/pgx-google-uuid"
 
     pgx, err := pgxpool.ParseConfig(connString)
 	pgx.AfterConnect = func(ctx context.Context, t testing.TB, conn *pgx.Conn) {
