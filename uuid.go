@@ -123,9 +123,41 @@ func Register(tm *pgtype.Map) {
 	tm.TryWrapEncodePlanFuncs = append([]pgtype.TryWrapEncodePlanFunc{TryWrapUUIDEncodePlan}, tm.TryWrapEncodePlanFuncs...)
 	tm.TryWrapScanPlanFuncs = append([]pgtype.TryWrapScanPlanFunc{TryWrapUUIDScanPlan}, tm.TryWrapScanPlanFuncs...)
 
+	name := "uuid"
+	arrayName := "_" + name
+
 	tm.RegisterType(&pgtype.Type{
 		Name:  "uuid",
 		OID:   pgtype.UUIDOID,
 		Codec: UUIDCodec{},
 	})
+
+	// https://github.com/jackc/pgx/blob/ff9c26d8516879a5d48ae9d729c994d58e64777d/pgtype/register_default_pg_types.go#L5
+	var value uuid.UUID
+	tm.RegisterDefaultPgType(value, name)  // T
+	tm.RegisterDefaultPgType(&value, name) // *T
+
+	var sliceT []uuid.UUID
+	tm.RegisterDefaultPgType(sliceT, arrayName)  // []T
+	tm.RegisterDefaultPgType(&sliceT, arrayName) // *[]T
+
+	var slicePtrT []*uuid.UUID
+	tm.RegisterDefaultPgType(slicePtrT, arrayName)  // []*T
+	tm.RegisterDefaultPgType(&slicePtrT, arrayName) // *[]*T
+
+	var arrayOfT pgtype.Array[uuid.UUID]
+	tm.RegisterDefaultPgType(arrayOfT, arrayName)  // Array[T]
+	tm.RegisterDefaultPgType(&arrayOfT, arrayName) // *Array[T]
+
+	var arrayOfPtrT pgtype.Array[*uuid.UUID]
+	tm.RegisterDefaultPgType(arrayOfPtrT, arrayName)  // Array[*T]
+	tm.RegisterDefaultPgType(&arrayOfPtrT, arrayName) // *Array[*T]
+
+	var flatArrayOfT pgtype.FlatArray[uuid.UUID]
+	tm.RegisterDefaultPgType(flatArrayOfT, arrayName)  // FlatArray[T]
+	tm.RegisterDefaultPgType(&flatArrayOfT, arrayName) // *FlatArray[T]
+
+	var flatArrayOfPtrT pgtype.FlatArray[*uuid.UUID]
+	tm.RegisterDefaultPgType(flatArrayOfPtrT, arrayName)  // FlatArray[*T]
+	tm.RegisterDefaultPgType(&flatArrayOfPtrT, arrayName) // *FlatArray[*T]
 }
